@@ -8,6 +8,9 @@
 #include "hdrs/1_colwise_read.h"
 #include "hdrs/2_rowwise_read.h"
 #include "hdrs/3_unroll_loop.h"
+#include "hdrs/4_vectorized_loop.h"
+#include "hdrs/5_multithreaded.h"
+#include "hdrs/6_vectorized_multithreaded.h"
 
 constexpr auto MEASURE_ITER_NUM = 10;
 constexpr auto MATRIX_ROWS = 10000;
@@ -38,21 +41,25 @@ measureTime(const MATRIX_VAL *data, SUM_FUNC_PTR sum) {
   return minTime;
 }
 
-void printResult(const std::string& solutionName, timer::TIME_TYPE time) {
+void printResult(const std::string &solutionName, timer::TIME_TYPE time) {
   std::cout << "Solution with name \"" << solutionName << "\" has best time of " << time << " us." << std::endl;
 }
 
 int main() {
-  std::vector<MATRIX_VAL> data(MATRIX_ROWS * MATRIX_COLS, 1.);
+  const std::vector<MATRIX_VAL> data(MATRIX_ROWS * MATRIX_COLS, 1.);
 
-  const auto time1 = measureTime(data.data(), colwiseReadSum);
-  printResult("column-wise-read", time1);
-
-  const auto time2 = measureTime(data.data(), rowwiseReadSum);
-  printResult("row-wise-read", time2);
-
-  const auto time3 = measureTime(data.data(), unrollLoopSum);
-  printResult("unroll-loop-read", time3);
+  printResult("column-wise-read", measureTime(data.data(), colwiseReadSum));
+  printResult("row-wise-read", measureTime(data.data(), rowwiseReadSum));
+  printResult("unroll-loop-read", measureTime(data.data(), unrollLoopSum));
+  printResult("sse-loop-read", measureTime(data.data(), vectorizedSSELoopSum));
+  printResult("sse-unrolled-loop-read", measureTime(data.data(), vectorizedSSEUnrolledLoopSum));
+  printResult("avx-loop-read", measureTime(data.data(), vectorizedAVXLoopSum));
+  printResult("avx-unroll-loop-read", measureTime(data.data(), vectorizedAVXUnrollLoopSum));
+  printResult("threaded-atomic-loop-read", measureTime(data.data(), threadedAtomicReadSum));
+  printResult("threaded-loop-read", measureTime(data.data(), threadedReadSum));
+  printResult("threaded-cache-coherency-loop-read", measureTime(data.data(), threadedCacheCoherencyReadSum));
+  printResult("vectorized-threaded-loop-read", measureTime(data.data(), vectorizedThreadedSum));
+  printResult("vectorized-unrolled-threaded-loop-read", measureTime(data.data(), vectorizedUnrolledThreadedSum));
 
   return 0;
 }

@@ -1,8 +1,0 @@
-//
-// Created by maletsden on 17.08.21.
-//
-
-#ifndef CACHE_OPTIMIZATION_CONSTANTS_H
-#define CACHE_OPTIMIZATION_CONSTANTS_H
-
-#endif //CACHE_OPTIMIZATION_CONSTANTS_H
