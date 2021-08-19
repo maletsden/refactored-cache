@@ -1,32 +1,31 @@
 //
 // Created by maletsden on 17.08.21.
 //
+#include "../hdrs/5_multithreaded.h"
 
 #include <vector>
 #include <thread>
-#include <atomic>
 #include <numeric>
-#include "../hdrs/5_multithreaded.h"
+#include <mutex>
 
-MATRIX_VAL threadedAtomicReadSum(const MATRIX_VAL* data, size_t rows, size_t cols) {
-
-  constexpr auto threadsNum = 4;
-  std::atomic<MATRIX_VAL> res{};
+MATRIX_VAL threadedMutexReadSum(const MATRIX_VAL* data, size_t rows, size_t cols) {
+  MATRIX_VAL res = MATRIX_VAL();
+  constexpr auto threadsNum = 6;
 
   std::vector<std::thread> threads;
   threads.reserve(threadsNum);
 
+  std::mutex mx;
   for (auto threadI = 0; threadI < threadsNum; ++threadI) {
-    threads.emplace_back([threadI, rows, cols, data, &res]() {
+    threads.emplace_back([threadI, rows, cols, data, &res, &mx]() {
       const auto rowsPerThread = rows / threadsNum;
       const auto start = threadI * rowsPerThread;
       const auto end = (threadI + 1) == threadsNum ? rows : start + rowsPerThread;
 
       for (auto row = start; row < end; ++row) {
-        const auto rowI = row * cols;
         for (auto col = 0; col < cols; ++col) {
-          for (double g = res; !res.compare_exchange_strong(g, g + data[rowI + col]);)
-            ;
+            std::lock_guard<std::mutex> guard(mx);
+            res += data[row * cols + col];
         }
       }
 

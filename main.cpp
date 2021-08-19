@@ -13,8 +13,8 @@
 #include "hdrs/6_vectorized_multithreaded.h"
 
 constexpr auto MEASURE_ITER_NUM = 10;
-constexpr auto MATRIX_ROWS = 10000;
-constexpr auto MATRIX_COLS = 10000;
+constexpr auto MATRIX_ROWS = 10'000;
+constexpr auto MATRIX_COLS = 10'000;
 constexpr auto EXPECTED_RESULT = static_cast<MATRIX_VAL>(MATRIX_ROWS * MATRIX_COLS);
 
 bool isAlmostEqual(MATRIX_VAL res) {
@@ -55,7 +55,7 @@ int main() {
   printResult("sse-unrolled-loop-read", measureTime(data.data(), vectorizedSSEUnrolledLoopSum));
   printResult("avx-loop-read", measureTime(data.data(), vectorizedAVXLoopSum));
   printResult("avx-unroll-loop-read", measureTime(data.data(), vectorizedAVXUnrollLoopSum));
-  printResult("threaded-atomic-loop-read", measureTime(data.data(), threadedAtomicReadSum));
+  printResult("threaded-atomic-loop-read", measureTime(data.data(), threadedMutexReadSum));
   printResult("threaded-loop-read", measureTime(data.data(), threadedReadSum));
   printResult("threaded-cache-coherency-loop-read", measureTime(data.data(), threadedCacheCoherencyReadSum));
   printResult("vectorized-threaded-loop-read", measureTime(data.data(), vectorizedThreadedSum));

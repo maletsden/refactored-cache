@@ -7,7 +7,7 @@
 
 #include "types.h"
 
-MATRIX_VAL threadedAtomicReadSum(const MATRIX_VAL* data, size_t rows, size_t cols);
+MATRIX_VAL threadedMutexReadSum(const MATRIX_VAL* data, size_t rows, size_t cols);
 MATRIX_VAL threadedReadSum(const MATRIX_VAL* data, size_t rows, size_t cols);
 MATRIX_VAL threadedCacheCoherencyReadSum(const MATRIX_VAL* data, size_t rows, size_t cols);
 
